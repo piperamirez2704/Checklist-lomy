@@ -1399,7 +1399,7 @@ ${obs ? `<div class="pdf-obs"><label>📝 Observaciones</label><p>${obs}</p></di
 
   // ── Google Sheets integration via Apps Script ───────────────
   // IMPORTANTE: reemplazá APPS_SCRIPT_URL con la URL de tu Web App
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzPITsWAfpFRtRduR2kCxJgy4WSbeo7kqCGabAiKHQFgOUx7_xTOfcozujWRzqccAloIg/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzRCzuRNi7nVqCFlyGt-lid5HQtKPOovASvE3S1hLAl1GctWLONIJhVeNd1DJ8cqJTA/exec';
 
   const ITEM_IDS = ['a1','a2','a3','a4','a5','a6','a7','a8',
                     's9','s11','s12','s13','s14',
@@ -1478,26 +1478,7 @@ ${obs ? `<div class="pdf-obs"><label>📝 Observaciones</label><p>${obs}</p></di
       const encoded = encodeURIComponent(JSON.stringify(payload));
       const url = APPS_SCRIPT_URL + '?data=' + encoded;
 
-      // Usar form oculto para evitar bloqueo CORS
-      const form = document.createElement('form');
-      form.method = 'GET';
-      form.action = url;
-      form.target = 'hidden_iframe';
-      document.body.appendChild(form);
-
-      const iframe = document.createElement('iframe');
-      iframe.name = 'hidden_iframe';
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-
-      await new Promise((resolve) => {
-        iframe.onload = () => resolve();
-        setTimeout(() => resolve(), 5000);
-        form.submit();
-      });
-
-      document.body.removeChild(form);
-      document.body.removeChild(iframe);
+      await fetch(url, { method: 'GET', mode: 'no-cors' });
 
       showToast('✅ Datos enviados a Google Sheets');
       btn.textContent = '✅ Enviado';
