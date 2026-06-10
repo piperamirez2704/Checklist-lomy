@@ -1478,14 +1478,26 @@ ${obs ? `<div class="pdf-obs"><label>📝 Observaciones</label><p>${obs}</p></di
       const encoded = encodeURIComponent(JSON.stringify(payload));
       const url = APPS_SCRIPT_URL + '?data=' + encoded;
 
-      // Usar imagen para evitar bloqueo CORS en Safari/iPad
-      await new Promise((resolve, reject) => {
-        const img = new Image();
-        const timeout = setTimeout(() => resolve(), 4000); // asumir éxito tras 4s
-        img.onload = () => { clearTimeout(timeout); resolve(); };
-        img.onerror = () => { clearTimeout(timeout); resolve(); }; // igual resolver, el script igual ejecuta
-        img.src = url;
+      // Usar form oculto para evitar bloqueo CORS
+      const form = document.createElement('form');
+      form.method = 'GET';
+      form.action = url;
+      form.target = 'hidden_iframe';
+      document.body.appendChild(form);
+
+      const iframe = document.createElement('iframe');
+      iframe.name = 'hidden_iframe';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      await new Promise((resolve) => {
+        iframe.onload = () => resolve();
+        setTimeout(() => resolve(), 5000);
+        form.submit();
       });
+
+      document.body.removeChild(form);
+      document.body.removeChild(iframe);
 
       showToast('✅ Datos enviados a Google Sheets');
       btn.textContent = '✅ Enviado';
