@@ -1427,10 +1427,9 @@ ${obs ? `<div class="pdf-obs"><label>📝 Observaciones</label><p>${obs}</p></di
   ];
 
   async function enviarASheets() {
+    // Pequeño delay para asegurar que el select confirmó su valor
+    await new Promise(r => setTimeout(r, 100));
     const btn = document.getElementById('sheets-btn');
-
-    // Validate Apps Script URL
-    // URL configurada
 
     const local = document.getElementById('meta-local').value.trim();
     if (!local) {
